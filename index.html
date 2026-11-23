@@ -55,6 +55,8 @@
   .proj.feature{grid-column:1/-1;flex-direction:row}
   .thumb{aspect-ratio:16/10;background-size:cover;background-position:top left;display:grid;place-items:center;color:rgba(255,255,255,.88);font-family:"Space Grotesk";font-weight:700;font-size:24px;text-align:center;padding:12px}
   .thumb.has-img{color:transparent}
+  .thumb{position:relative}
+  .thumb .phone{position:absolute;right:5%;bottom:7%;height:86%;aspect-ratio:9/16;object-fit:cover;object-position:top;border:4px solid #0d0f14;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.45);background:#0d0f14}
   .proj.feature .thumb{flex:1.2;aspect-ratio:auto;min-height:340px}
   .body{padding:26px;display:flex;flex-direction:column;gap:12px;flex:1}
   .tag{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#ff9a76}
@@ -308,12 +310,12 @@ const currentLang = () => document.documentElement.lang === 'es' ? 'es' : 'en';
 function renderProjects(list) {
   list.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   document.getElementById('projects').innerHTML = list.map((p, i) => {
-    const img = imgUrl(p.image);
+    const img = imgUrl(p.image), mobile = imgUrl(p.image_mobile);
     const bg = (img ? `url('${esc(img)}'),` : '') + `linear-gradient(135deg,${GRADS[i % GRADS.length]})`;
     const live = safeUrl(p.live_url), demo = safeUrl(p.demo_url), video = safeUrl(p.video_url);
     const stack = Array.isArray(p.stack) ? p.stack : [];
     return `<article class="proj${p.featured ? ' feature' : ''}">
-      <div class="thumb${img ? ' has-img' : ''}" style="background-image:${bg}" role="img" aria-label="${esc(p.title)}">${esc(p.title)}</div>
+      <div class="thumb${img ? ' has-img' : ''}" style="background-image:${bg}" role="img" aria-label="${esc(p.title)}">${esc(p.title)}${mobile ? `<img class="phone" src="${esc(mobile)}" alt="">` : ''}</div>
       <div class="body">
         ${p.tag_en ? tr(p.tag_en, p.tag_es, 'div', ' class="tag"') : ''}
         ${tr(p.title, p.title_es, 'h3')}

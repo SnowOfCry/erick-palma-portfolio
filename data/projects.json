@@ -37,7 +37,8 @@
     "live_url": "https://menu.brostacos.net/",
     "demo_url": "",
     "video_url": "",
-    "image": "bros-tacos-panel.png"
+    "image": "bros-tacos-panel.png",
+    "image_mobile": "bros-tacos-mobile.png"
   },
   {
     "id": "p3",

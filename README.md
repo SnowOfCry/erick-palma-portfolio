@@ -55,6 +55,7 @@ Use simple file names without spaces, e.g. `bros-tacos.jpg`. Best size for proje
 
 - `order` sets the position (1 = first). `featured: true` makes it a big full-width card.
 - `image` is the file name of a photo in the `images` folder. Leave it `""` for a colored card.
+- Optional `image_mobile`: a phone screenshot (tall) shown in a phone frame over the main photo, e.g. `"image_mobile": "bros-tacos-mobile.png"`.
 - Leave a link `""` to hide its button. Leave a `_es` field `""` to show the English text in Spanish too.
 - Separate projects with a comma, and keep the `[` `]` around the whole list.
 
