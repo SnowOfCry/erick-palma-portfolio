@@ -45,7 +45,6 @@ Use simple file names without spaces, e.g. `bros-tacos.jpg`. Best size for proje
   "desc_es": "Descripción corta.",
   "problem_en": "", "problem_es": "",
   "result_en": "", "result_es": "",
-  "stack": ["PHP", "Square"],
   "live_url": "https://example.com",
   "demo_url": "",
   "video_url": "",

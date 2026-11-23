@@ -65,8 +65,6 @@
   .proj dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14.5px}
   .proj dt{color:#8f98ad;font-weight:600}
   .proj dd{color:#dfe3ec}
-  .stack{display:flex;flex-wrap:wrap;gap:6px}
-  .stack span{font-size:12.5px;background:#2e3852;border:1px solid #3c4766;padding:3px 10px;border-radius:999px;color:#d5dae6}
   .plinks{display:flex;gap:16px;margin-top:auto;padding-top:8px;flex-wrap:wrap}
   .plinks a{color:#fff;font-weight:600;font-size:15px;text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:2px}
   .plinks a:hover{color:#ff9a76}
@@ -210,9 +208,7 @@
       <div class="ways">
         <a id="c-email" hidden><span>✉</span><div><small>Email</small><span class="val"></span></div></a>
         <a id="c-phone" hidden><span>☏</span><div><small data-i18n="lbl_phone">Phone</small><span class="val"></span></div></a>
-        <a id="c-wa" hidden target="_blank" rel="noopener"><span>◉</span><div><small>WhatsApp</small><span data-i18n="lbl_wa">Message me</span></div></a>
-        <a id="c-li" hidden target="_blank" rel="noopener"><span>in</span><div><small>LinkedIn</small><span data-i18n="lbl_li">View my profile</span></div></a>
-      </div>
+        <a id="c-wa" hidden target="_blank" rel="noopener"><span>◉</span><div><small>WhatsApp</small><span data-i18n="lbl_wa">Message me</span></div></a>      </div>
       <form action="https://api.web3forms.com/submit" method="POST">
         <input type="hidden" name="access_key" id="w3f-key" value="">
         <input type="hidden" name="subject" value="New portfolio inquiry">
@@ -267,7 +263,7 @@ const ES = {
   f1:"Servicio bilingüe", f2:"Proyectos lanzados", f3:"Trato directo",
   ct_kicker:"Contacto", ct_title:"Construyamos algo para tu negocio",
   ct_sub:"Cuéntame qué necesitas y te respondo en un día hábil con ideas y una cotización gratis.",
-  lbl_phone:"Teléfono", lbl_wa:"Envíame un mensaje", lbl_li:"Ver mi perfil",
+  lbl_phone:"Teléfono", lbl_wa:"Envíame un mensaje",
   fm_name:"Tu nombre", fm_email:"Correo electrónico", fm_msg:"Cuéntame de tu negocio y lo que necesitas",
   fm_o1:"Sitio web", fm_o2:"Sistema de negocio", fm_o3:"Datos y reportes", fm_o4:"Herramientas de IA", fm_o5:"Aún no sé",
   fm_send:"Enviar mensaje", ft:"Desarrollador Web y Soluciones para Negocios"
@@ -312,9 +308,7 @@ function renderProjects(list) {
   document.getElementById('projects').innerHTML = list.map((p, i) => {
     const img = imgUrl(p.image), mobile = imgUrl(p.image_mobile);
     const bg = (img ? `url('${esc(img)}'),` : '') + `linear-gradient(135deg,${GRADS[i % GRADS.length]})`;
-    const live = safeUrl(p.live_url), demo = safeUrl(p.demo_url), video = safeUrl(p.video_url);
-    const stack = Array.isArray(p.stack) ? p.stack : [];
-    return `<article class="proj${p.featured ? ' feature' : ''}">
+    const live = safeUrl(p.live_url), demo = safeUrl(p.demo_url), video = safeUrl(p.video_url);    return `<article class="proj${p.featured ? ' feature' : ''}">
       <div class="thumb${img ? ' has-img' : ''}" style="background-image:${bg}" role="img" aria-label="${esc(p.title)}">${esc(p.title)}${mobile ? `<img class="phone" src="${esc(mobile)}" alt="">` : ''}</div>
       <div class="body">
         ${p.tag_en ? tr(p.tag_en, p.tag_es, 'div', ' class="tag"') : ''}
@@ -323,9 +317,7 @@ function renderProjects(list) {
         ${p.problem_en || p.result_en ? `<dl>
           ${p.problem_en ? `<dt data-i18n="lbl_problem">Problem</dt>${tr(p.problem_en, p.problem_es, 'dd')}` : ''}
           ${p.result_en ? `<dt data-i18n="lbl_result">Result</dt>${tr(p.result_en, p.result_es, 'dd')}` : ''}
-        </dl>` : ''}
-        ${stack.length ? `<div class="stack">${stack.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
-        ${live || demo || video ? `<div class="plinks">
+        </dl>` : ''}        ${live || demo || video ? `<div class="plinks">
           ${live ? `<a href="${esc(live)}" target="_blank" rel="noopener" data-i18n="lnk_live">Visit site →</a>` : ''}
           ${demo ? `<a href="${esc(demo)}" target="_blank" rel="noopener" data-i18n="lnk_demo">Try the demo →</a>` : ''}
           ${video ? `<a href="${esc(video)}" target="_blank" rel="noopener" data-i18n="lnk_video">Watch walkthrough</a>` : ''}
@@ -341,9 +333,7 @@ function applySettings(s) {
   const tel = phone.replace(/[^\d+]/g, ''), wa = String(s.whatsapp || '').replace(/\D/g, '');
   show('c-email', email ? 'mailto:' + email : '', email);
   show('c-phone', tel ? 'tel:' + tel : '', phone);
-  show('c-wa', wa ? 'https://wa.me/' + wa : '');
-  show('c-li', safeUrl(s.linkedin));
-  if (s.projects_count) document.getElementById('projects-count').textContent = s.projects_count;
+  show('c-wa', wa ? 'https://wa.me/' + wa : '');  if (s.projects_count) document.getElementById('projects-count').textContent = s.projects_count;
   document.getElementById('w3f-key').value = s.web3forms_key || '';
   const photo = imgUrl(s.photo);
   if (photo) { const el = document.getElementById('photo'); el.style.backgroundImage = `url('${photo.replace(/'/g, '%27')}')`; el.style.color = 'transparent'; }
