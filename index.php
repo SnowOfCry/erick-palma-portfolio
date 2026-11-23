@@ -1,0 +1,341 @@
+<?php
+require __DIR__ . '/lib.php';
+$s = get_settings();
+$projects = get_projects();
+$grads = ['#e2572b,#7a2a63', '#f0a030,#c0392b', '#2fa36b,#1b5e4a', '#3a7bd5,#1b2a6b', '#6b5bd6,#2b2366', '#d6457a,#5b1f45'];
+$wa = preg_replace('/\D/', '', $s['whatsapp']);
+$tel = preg_replace('/[^\d+]/', '', $s['phone']);
+$linkedin = safe_url($s['linkedin']);
+
+function tr(string $en, string $es, string $tag = 'span', string $attrs = ''): string {
+    $esAttr = trim($es) !== '' ? ' data-es="' . e($es) . '"' : '';
+    return "<$tag$attrs data-en=\"" . e($en) . "\"$esAttr>" . e($en) . "</$tag>";
+}
+?><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erick Palma — Web Developer & Business Solutions</title>
+<meta name="description" content="Erick Palma builds websites and business systems — quotes, invoices, inventory, approvals and payments — for small businesses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#14161c;--ink-2:#4a4f5c;--paper:#f7f5f0;--card:#fff;--line:#e4e0d6;--accent:#e2572b;--accent-dark:#b8411c;--navy:#1b2233;--radius:14px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;font-size:17px}
+  h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.15;letter-spacing:-.01em}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  nav{position:sticky;top:0;z-index:10;background:rgba(247,245,240,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{font-family:"Space Grotesk";font-weight:700;font-size:20px;text-decoration:none;display:flex;align-items:center;gap:10px}
+  .logo span{background:var(--ink);color:var(--paper);width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:15px}
+  .links{display:flex;gap:28px;align-items:center}
+  .links a{text-decoration:none;font-weight:500;font-size:15px;color:var(--ink-2)}
+  .links a:hover{color:var(--ink)}
+  .lang{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px;display:flex;gap:2px}
+  .lang button{border:0;background:none;font:600 13px Inter,sans-serif;padding:6px 11px;border-radius:999px;cursor:pointer;color:var(--ink-2)}
+  .lang button.on{background:var(--ink);color:var(--paper)}
+  .hero{padding:96px 0 80px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--ink-2);margin-bottom:22px}
+  .eyebrow i{width:8px;height:8px;border-radius:50%;background:#2fa36b;display:inline-block}
+  .hero h1{font-size:clamp(40px,6.5vw,76px);max-width:15ch}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p{font-size:20px;color:var(--ink-2);max-width:56ch;margin:24px 0 36px}
+  .btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-block;text-decoration:none;font-weight:600;padding:14px 24px;border-radius:10px;border:2px solid var(--ink);font-size:16px;cursor:pointer;font-family:inherit}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:var(--accent-dark);border-color:var(--accent-dark)}
+  .btn.ghost{background:transparent}
+  .btn.ghost:hover{background:var(--ink);color:var(--paper)}
+  section{padding:88px 0}
+  .head{margin-bottom:44px;max-width:640px}
+  .head small{display:block;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:13px;margin-bottom:10px}
+  .head h2{font-size:clamp(30px,4vw,44px)}
+  .head p{color:var(--ink-2);margin-top:12px}
+  .services{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .svc{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .svc .ic{width:44px;height:44px;border-radius:10px;background:#fbe7df;color:var(--accent);display:grid;place-items:center;font-size:22px;margin-bottom:18px}
+  .svc h3{font-size:19px;margin-bottom:8px}
+  .svc p{color:var(--ink-2);font-size:15px}
+  #work{background:var(--navy);color:#eef0f5}
+  #work .head p{color:#aeb5c6}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+  .proj{background:#232c41;border:1px solid #313b55;border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+  .proj.feature{grid-column:1/-1;flex-direction:row}
+  .thumb{aspect-ratio:16/10;background-size:cover;background-position:top center;display:grid;place-items:center;color:rgba(255,255,255,.88);font-family:"Space Grotesk";font-weight:700;font-size:24px;text-align:center;padding:12px}
+  .thumb.has-img{color:transparent}
+  .proj.feature .thumb{flex:1.2;aspect-ratio:auto;min-height:340px}
+  .body{padding:26px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .tag{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#ff9a76}
+  .proj h3{font-size:24px;color:#fff}
+  .proj p{color:#c3c9d6;font-size:15.5px}
+  .proj dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14.5px}
+  .proj dt{color:#8f98ad;font-weight:600}
+  .proj dd{color:#dfe3ec}
+  .stack{display:flex;flex-wrap:wrap;gap:6px}
+  .stack span{font-size:12.5px;background:#2e3852;border:1px solid #3c4766;padding:3px 10px;border-radius:999px;color:#d5dae6}
+  .plinks{display:flex;gap:16px;margin-top:auto;padding-top:8px;flex-wrap:wrap}
+  .plinks a{color:#fff;font-weight:600;font-size:15px;text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:2px}
+  .plinks a:hover{color:#ff9a76}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+  .step{border-top:3px solid var(--ink);padding-top:20px}
+  .step::before{counter-increment:s;content:"0" counter(s);font-family:"Space Grotesk";font-weight:700;color:var(--accent);font-size:15px}
+  .step h3{font-size:20px;margin:8px 0}
+  .step p{color:var(--ink-2);font-size:15px}
+  .about{display:grid;grid-template-columns:1fr 1.4fr;gap:56px;align-items:center}
+  .photo{aspect-ratio:1;border-radius:var(--radius);background:linear-gradient(135deg,#e2572b,#1b2233);background-size:cover;background-position:center;display:grid;place-items:center;color:#fff;font-family:"Space Grotesk";font-size:64px;font-weight:700}
+  .about p{color:var(--ink-2);margin-bottom:16px}
+  .facts{display:flex;gap:36px;margin-top:24px;flex-wrap:wrap}
+  .facts b{display:block;font-family:"Space Grotesk";font-size:30px;color:var(--ink)}
+  .facts span{font-size:14px;color:var(--ink-2)}
+  #contact{background:var(--ink);color:var(--paper)}
+  #contact .head p{color:#b9bcc6}
+  .contact{display:grid;grid-template-columns:1fr 1.2fr;gap:48px}
+  .ways a{display:flex;align-items:center;gap:14px;text-decoration:none;padding:16px 0;border-bottom:1px solid #2c2f39;font-size:17px}
+  .ways a:hover{color:#ff9a76}
+  .ways small{display:block;color:#8d919d;font-size:13px}
+  form{display:grid;gap:14px}
+  input,textarea,select{width:100%;padding:14px 16px;border-radius:10px;border:1px solid #33363f;background:#1d2027;color:#fff;font:inherit;font-size:16px}
+  textarea{min-height:130px;resize:vertical}
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);border-color:transparent}
+  footer{background:var(--ink);color:#8d919d;font-size:14px;padding:28px 0;border-top:1px solid #2c2f39}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+  @media (max-width:900px){
+    .services,.steps{grid-template-columns:1fr 1fr}
+    .grid{grid-template-columns:1fr}
+    .proj.feature{flex-direction:column}
+    .proj.feature .thumb{min-height:220px}
+    .about,.contact{grid-template-columns:1fr}
+    .photo{max-width:280px}
+    .links > a{display:none}
+  }
+  @media (max-width:560px){
+    .services,.steps{grid-template-columns:1fr}
+    section{padding:64px 0}
+    .hero{padding:64px 0 56px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#top" class="logo"><span>EP</span>Erick Palma</a>
+    <div class="links">
+      <a href="#services" data-i18n="nav_services">Services</a>
+      <a href="#work" data-i18n="nav_work">Work</a>
+      <a href="#process" data-i18n="nav_process">Process</a>
+      <a href="#contact" data-i18n="nav_contact">Contact</a>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" class="on">EN</button>
+        <button type="button" data-lang="es">ES</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="eyebrow"><i></i><span data-i18n="hero_eyebrow">Web Developer & Business Solutions</span></div>
+    <h1 data-i18n-html="hero_title">Websites and systems that <em>run your business</em>.</h1>
+    <p data-i18n="hero_sub">I build fast websites and custom business systems — quotes, invoices, inventory, approvals and payments — so small businesses can sell more and spend less time on paperwork.</p>
+    <div class="btns">
+      <a href="#work" class="btn primary" data-i18n="hero_cta1">See my work</a>
+      <a href="#contact" class="btn ghost" data-i18n="hero_cta2">Get a free quote</a>
+    </div>
+  </div>
+</header>
+
+<section id="services">
+  <div class="wrap">
+    <div class="head">
+      <small data-i18n="svc_kicker">What I do</small>
+      <h2 data-i18n="svc_title">One person for your whole online setup</h2>
+    </div>
+    <div class="services">
+      <div class="svc"><div class="ic">◱</div><h3 data-i18n="s1_t">Websites</h3><p data-i18n="s1_d">Business sites, online menus and stores that load fast, look great on phones and are easy to update.</p></div>
+      <div class="svc"><div class="ic">⇄</div><h3 data-i18n="s2_t">Business Systems</h3><p data-i18n="s2_d">Quotes, invoices, inventory, approvals and payments in one place — no more spreadsheets and paper.</p></div>
+      <div class="svc"><div class="ic">▦</div><h3 data-i18n="s3_t">Data & Reports</h3><p data-i18n="s3_d">Data warehouses and dashboards that show your sales, customers and inventory at a glance.</p></div>
+      <div class="svc"><div class="ic">✦</div><h3 data-i18n="s4_t">AI Tools</h3><p data-i18n="s4_d">Practical AI that answers customers, drafts quotes and saves your team hours every week.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="work">
+  <div class="wrap">
+    <div class="head">
+      <small data-i18n="work_kicker">Selected work</small>
+      <h2 data-i18n="work_title">Real projects for real businesses</h2>
+      <p data-i18n="work_sub">Live sites you can visit and systems you can try with demo data.</p>
+    </div>
+    <div class="grid">
+<?php foreach ($projects as $i => $p):
+    $img = img_url($p['image'] ?? '');
+    $g = $grads[$i % count($grads)];
+    $bg = ($img ? "url('" . e($img) . "')," : '') . "linear-gradient(135deg,$g)";
+    $live = safe_url($p['live_url'] ?? ''); $demo = safe_url($p['demo_url'] ?? ''); $video = safe_url($p['video_url'] ?? '');
+?>
+      <article class="proj<?= !empty($p['featured']) ? ' feature' : '' ?>">
+        <div class="thumb<?= $img ? ' has-img' : '' ?>" style="background-image:<?= $bg ?>" role="img" aria-label="<?= e($p['title']) ?>"><?= e($p['title']) ?></div>
+        <div class="body">
+          <?php if (!empty($p['tag_en'])) echo tr($p['tag_en'], $p['tag_es'] ?? '', 'div', ' class="tag"'); ?>
+          <?= tr($p['title'], $p['title_es'] ?? '', 'h3') ?>
+          <?php if (!empty($p['desc_en'])) echo tr($p['desc_en'], $p['desc_es'] ?? '', 'p'); ?>
+          <?php if (!empty($p['problem_en']) || !empty($p['result_en'])): ?>
+          <dl>
+            <?php if (!empty($p['problem_en'])): ?><dt data-i18n="lbl_problem">Problem</dt><?= tr($p['problem_en'], $p['problem_es'] ?? '', 'dd') ?><?php endif; ?>
+            <?php if (!empty($p['result_en'])): ?><dt data-i18n="lbl_result">Result</dt><?= tr($p['result_en'], $p['result_es'] ?? '', 'dd') ?><?php endif; ?>
+          </dl>
+          <?php endif; ?>
+          <?php if (!empty($p['stack'])): ?>
+          <div class="stack"><?php foreach ($p['stack'] as $t) echo '<span>' . e($t) . '</span>'; ?></div>
+          <?php endif; ?>
+          <?php if ($live || $demo || $video): ?>
+          <div class="plinks">
+            <?php if ($live): ?><a href="<?= e($live) ?>" target="_blank" rel="noopener" data-i18n="lnk_live">Visit site →</a><?php endif; ?>
+            <?php if ($demo): ?><a href="<?= e($demo) ?>" target="_blank" rel="noopener" data-i18n="lnk_demo">Try the demo →</a><?php endif; ?>
+            <?php if ($video): ?><a href="<?= e($video) ?>" target="_blank" rel="noopener" data-i18n="lnk_video">Watch walkthrough</a><?php endif; ?>
+          </div>
+          <?php endif; ?>
+        </div>
+      </article>
+<?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="head">
+      <small data-i18n="proc_kicker">How I work</small>
+      <h2 data-i18n="proc_title">Simple, clear, no surprises</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><h3 data-i18n="st1_t">Talk</h3><p data-i18n="st1_d">We meet (in person or online) and I learn how your business works today.</p></div>
+      <div class="step"><h3 data-i18n="st2_t">Plan & quote</h3><p data-i18n="st2_d">You get a clear plan and a fixed price before any work starts.</p></div>
+      <div class="step"><h3 data-i18n="st3_t">Build</h3><p data-i18n="st3_d">I build it and show you progress so you can give feedback along the way.</p></div>
+      <div class="step"><h3 data-i18n="st4_t">Launch & support</h3><p data-i18n="st4_d">We go live, I train your team, and I'm here for updates and support.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about">
+    <?php $photo = img_url($s['photo']); ?>
+    <div class="photo" <?= $photo ? 'style="background-image:url(\'' . e($photo) . '\');color:transparent"' : '' ?>>EP</div>
+    <div>
+      <div class="head" style="margin-bottom:20px">
+        <small data-i18n="ab_kicker">About me</small>
+        <h2 data-i18n="ab_title">Hi, I'm Erick.</h2>
+      </div>
+      <p data-i18n="ab_p1">I'm a web developer and data engineer. I help small businesses get online and replace messy spreadsheets with systems that actually fit the way they work.</p>
+      <p data-i18n="ab_p2">I work in English and Spanish, and you deal with me directly — no agencies, no middlemen.</p>
+      <div class="facts">
+        <div><b>EN / ES</b><span data-i18n="f1">Bilingual service</span></div>
+        <div><b><?= e($s['projects_count']) ?></b><span data-i18n="f2">Projects launched</span></div>
+        <div><b>1:1</b><span data-i18n="f3">Direct contact</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="head">
+      <small data-i18n="ct_kicker">Contact</small>
+      <h2 data-i18n="ct_title">Let's build something for your business</h2>
+      <p data-i18n="ct_sub">Tell me what you need and I'll get back to you within one business day with ideas and a free quote.</p>
+    </div>
+    <div class="contact">
+      <div class="ways">
+        <?php if ($s['email']): ?><a href="mailto:<?= e($s['email']) ?>"><span>✉</span><div><small>Email</small><?= e($s['email']) ?></div></a><?php endif; ?>
+        <?php if ($tel): ?><a href="tel:<?= e($tel) ?>"><span>☏</span><div><small data-i18n="lbl_phone">Phone</small><?= e($s['phone']) ?></div></a><?php endif; ?>
+        <?php if ($wa): ?><a href="https://wa.me/<?= e($wa) ?>" target="_blank" rel="noopener"><span>◉</span><div><small>WhatsApp</small><span data-i18n="lbl_wa">Message me</span></div></a><?php endif; ?>
+        <?php if ($linkedin): ?><a href="<?= e($linkedin) ?>" target="_blank" rel="noopener"><span>in</span><div><small>LinkedIn</small><span data-i18n="lbl_li">View my profile</span></div></a><?php endif; ?>
+      </div>
+      <form action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="<?= e($s['web3forms_key']) ?>">
+        <input type="hidden" name="subject" value="New portfolio inquiry">
+        <input type="checkbox" name="botcheck" style="display:none">
+        <input name="name" required data-i18n-ph="fm_name" placeholder="Your name">
+        <input name="email" type="email" required data-i18n-ph="fm_email" placeholder="Email">
+        <select name="service">
+          <option data-i18n="fm_o1">Website</option>
+          <option data-i18n="fm_o2">Business system</option>
+          <option data-i18n="fm_o3">Data & reports</option>
+          <option data-i18n="fm_o4">AI tools</option>
+          <option data-i18n="fm_o5">Not sure yet</option>
+        </select>
+        <textarea name="message" required data-i18n-ph="fm_msg" placeholder="Tell me about your business and what you need"></textarea>
+        <button class="btn primary" type="submit" data-i18n="fm_send">Send message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© <?= date('Y') ?> Erick Palma</span>
+    <span data-i18n="ft">Web Developer & Business Solutions</span>
+  </div>
+</footer>
+
+<script>
+const ES = {
+  nav_services:"Servicios", nav_work:"Proyectos", nav_process:"Proceso", nav_contact:"Contacto",
+  hero_eyebrow:"Desarrollador Web y Soluciones para Negocios",
+  hero_title:"Sitios web y sistemas que <em>impulsan tu negocio</em>.",
+  hero_sub:"Creo sitios web rápidos y sistemas a la medida — cotizaciones, facturas, inventario, aprobaciones y pagos — para que los negocios vendan más y pierdan menos tiempo en papeleo.",
+  hero_cta1:"Ver mis proyectos", hero_cta2:"Cotización gratis",
+  svc_kicker:"Lo que hago", svc_title:"Una sola persona para todo lo digital de tu negocio",
+  s1_t:"Sitios web", s1_d:"Sitios para negocios, menús digitales y tiendas en línea rápidos, que se ven bien en el celular y son fáciles de actualizar.",
+  s2_t:"Sistemas de negocio", s2_d:"Cotizaciones, facturas, inventario, aprobaciones y pagos en un solo lugar — sin hojas de cálculo ni papeles.",
+  s3_t:"Datos y reportes", s3_d:"Almacenes de datos y tableros que muestran tus ventas, clientes e inventario de un vistazo.",
+  s4_t:"Herramientas de IA", s4_d:"IA práctica que responde a clientes, prepara cotizaciones y le ahorra horas a tu equipo cada semana.",
+  work_kicker:"Proyectos", work_title:"Proyectos reales para negocios reales",
+  work_sub:"Sitios en vivo que puedes visitar y sistemas que puedes probar con datos de demostración.",
+  lbl_problem:"Problema", lbl_result:"Resultado",
+  lnk_demo:"Probar la demo →", lnk_video:"Ver video", lnk_live:"Visitar sitio →",
+  proc_kicker:"Cómo trabajo", proc_title:"Simple, claro y sin sorpresas",
+  st1_t:"Platicamos", st1_d:"Nos reunimos (en persona o en línea) y conozco cómo funciona tu negocio hoy.",
+  st2_t:"Plan y cotización", st2_d:"Recibes un plan claro y un precio fijo antes de empezar.",
+  st3_t:"Construyo", st3_d:"Lo desarrollo y te muestro el avance para que me des tu opinión en el camino.",
+  st4_t:"Lanzamiento y soporte", st4_d:"Lo publicamos, capacito a tu equipo y sigo disponible para cambios y soporte.",
+  ab_kicker:"Sobre mí", ab_title:"Hola, soy Erick.",
+  ab_p1:"Soy desarrollador web e ingeniero de datos. Ayudo a negocios pequeños a estar en línea y a cambiar hojas de cálculo desordenadas por sistemas que se adaptan a su forma de trabajar.",
+  ab_p2:"Trabajo en inglés y español, y tratas directamente conmigo — sin agencias ni intermediarios.",
+  f1:"Servicio bilingüe", f2:"Proyectos lanzados", f3:"Trato directo",
+  ct_kicker:"Contacto", ct_title:"Construyamos algo para tu negocio",
+  ct_sub:"Cuéntame qué necesitas y te respondo en un día hábil con ideas y una cotización gratis.",
+  lbl_phone:"Teléfono", lbl_wa:"Envíame un mensaje", lbl_li:"Ver mi perfil",
+  fm_name:"Tu nombre", fm_email:"Correo electrónico", fm_msg:"Cuéntame de tu negocio y lo que necesitas",
+  fm_o1:"Sitio web", fm_o2:"Sistema de negocio", fm_o3:"Datos y reportes", fm_o4:"Herramientas de IA", fm_o5:"Aún no sé",
+  fm_send:"Enviar mensaje", ft:"Desarrollador Web y Soluciones para Negocios"
+};
+const EN = {};
+document.querySelectorAll('[data-i18n]').forEach(el => EN[el.dataset.i18n] = el.textContent);
+document.querySelectorAll('[data-i18n-html]').forEach(el => EN[el.dataset.i18nHtml] = el.innerHTML);
+document.querySelectorAll('[data-i18n-ph]').forEach(el => EN[el.dataset.i18nPh] = el.placeholder);
+
+function setLang(lang){
+  const d = lang === 'es' ? ES : EN;
+  document.querySelectorAll('[data-i18n]').forEach(el => { const v = d[el.dataset.i18n]; if (v) el.textContent = v; });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { const v = d[el.dataset.i18nHtml]; if (v) el.innerHTML = v; });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { const v = d[el.dataset.i18nPh]; if (v) el.placeholder = v; });
+  // Project text typed in the admin panel
+  document.querySelectorAll('[data-en]').forEach(el => { el.textContent = (lang === 'es' && el.dataset.es) ? el.dataset.es : el.dataset.en; });
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.lang button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
+  try { localStorage.setItem('lang', lang); } catch(e) {}
+}
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+let saved = null;
+try { saved = localStorage.getItem('lang'); } catch(e) {}
+if (saved === 'es' || (!saved && (navigator.language || '').startsWith('es'))) setLang('es');
+</script>
+</body>
+</html>

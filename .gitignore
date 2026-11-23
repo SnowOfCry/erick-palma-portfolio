@@ -1,0 +1,11 @@
+# Private data created on the server — never commit
+data/auth.json
+data/login.json
+data/settings.json
+data/*.tmp
+
+# Uploaded photos live on the server only
+uploads/*
+!uploads/.htaccess
+
+.DS_Store
