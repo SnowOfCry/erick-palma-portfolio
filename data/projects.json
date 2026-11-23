@@ -68,15 +68,18 @@
     "featured": false,
     "title": "PrintTimeUSA",
     "title_es": "",
-    "tag_en": "E-commerce store",
-    "tag_es": "Tienda en línea",
-    "desc_en": "Custom PHP online store for a print business — product catalog, ordering and checkout, connected to a data warehouse for sales reporting.",
-    "desc_es": "Tienda en línea en PHP para un negocio de impresión — catálogo, pedidos y pago, conectada a un almacén de datos para reportes de ventas.",
-    "problem_en": "", "problem_es": "", "result_en": "", "result_es": "",
-    "stack": ["PHP", "E-commerce", "Data Warehouse"],
+    "tag_en": "Print shop · Custom e-commerce",
+    "tag_es": "Imprenta · Tienda en línea a la medida",
+    "desc_en": "A complete custom e-commerce solution for PrintTimeUSA. Customers can buy products, request a custom quote, or open a company account and add their employees. Company managers create coupons, see everything their company is buying, and order exclusive products that only their company can see.",
+    "desc_es": "Una solución completa de comercio en línea hecha a la medida para PrintTimeUSA. Los clientes pueden comprar productos, pedir una cotización personalizada o abrir una cuenta de empresa y agregar a sus empleados. Los gerentes de cada empresa crean cupones, ven todo lo que compra su empresa y piden productos exclusivos que solo su empresa puede ver.",
+    "problem_en": "Business customers needed one place to order, get custom quotes and keep their company's purchases under control.",
+    "problem_es": "Los clientes empresariales necesitaban un solo lugar para pedir, recibir cotizaciones personalizadas y controlar las compras de su empresa.",
+    "result_en": "A store with company and employee accounts, manager coupons, purchase tracking and private product catalogs for each company.",
+    "result_es": "Una tienda con cuentas de empresa y empleados, cupones para gerentes, seguimiento de compras y catálogos privados para cada empresa.",
+    "stack": ["PHP", "E-commerce", "Custom quotes", "Company accounts", "Coupons", "Data Warehouse"],
     "live_url": "https://printtimeusa.net",
     "demo_url": "",
     "video_url": "",
-    "image": ""
+    "image": "printtimeusa-store.png"
   }
 ]
