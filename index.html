@@ -1,17 +1,4 @@
-<?php
-require __DIR__ . '/lib.php';
-$s = get_settings();
-$projects = get_projects();
-$grads = ['#e2572b,#7a2a63', '#f0a030,#c0392b', '#2fa36b,#1b5e4a', '#3a7bd5,#1b2a6b', '#6b5bd6,#2b2366', '#d6457a,#5b1f45'];
-$wa = preg_replace('/\D/', '', $s['whatsapp']);
-$tel = preg_replace('/[^\d+]/', '', $s['phone']);
-$linkedin = safe_url($s['linkedin']);
-
-function tr(string $en, string $es, string $tag = 'span', string $attrs = ''): string {
-    $esAttr = trim($es) !== '' ? ' data-es="' . e($es) . '"' : '';
-    return "<$tag$attrs data-en=\"" . e($en) . "\"$esAttr>" . e($en) . "</$tag>";
-}
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -172,39 +159,7 @@ function tr(string $en, string $es, string $tag = 'span', string $attrs = ''): s
       <h2 data-i18n="work_title">Real projects for real businesses</h2>
       <p data-i18n="work_sub">Live sites you can visit and systems you can try with demo data.</p>
     </div>
-    <div class="grid">
-<?php foreach ($projects as $i => $p):
-    $img = img_url($p['image'] ?? '');
-    $g = $grads[$i % count($grads)];
-    $bg = ($img ? "url('" . e($img) . "')," : '') . "linear-gradient(135deg,$g)";
-    $live = safe_url($p['live_url'] ?? ''); $demo = safe_url($p['demo_url'] ?? ''); $video = safe_url($p['video_url'] ?? '');
-?>
-      <article class="proj<?= !empty($p['featured']) ? ' feature' : '' ?>">
-        <div class="thumb<?= $img ? ' has-img' : '' ?>" style="background-image:<?= $bg ?>" role="img" aria-label="<?= e($p['title']) ?>"><?= e($p['title']) ?></div>
-        <div class="body">
-          <?php if (!empty($p['tag_en'])) echo tr($p['tag_en'], $p['tag_es'] ?? '', 'div', ' class="tag"'); ?>
-          <?= tr($p['title'], $p['title_es'] ?? '', 'h3') ?>
-          <?php if (!empty($p['desc_en'])) echo tr($p['desc_en'], $p['desc_es'] ?? '', 'p'); ?>
-          <?php if (!empty($p['problem_en']) || !empty($p['result_en'])): ?>
-          <dl>
-            <?php if (!empty($p['problem_en'])): ?><dt data-i18n="lbl_problem">Problem</dt><?= tr($p['problem_en'], $p['problem_es'] ?? '', 'dd') ?><?php endif; ?>
-            <?php if (!empty($p['result_en'])): ?><dt data-i18n="lbl_result">Result</dt><?= tr($p['result_en'], $p['result_es'] ?? '', 'dd') ?><?php endif; ?>
-          </dl>
-          <?php endif; ?>
-          <?php if (!empty($p['stack'])): ?>
-          <div class="stack"><?php foreach ($p['stack'] as $t) echo '<span>' . e($t) . '</span>'; ?></div>
-          <?php endif; ?>
-          <?php if ($live || $demo || $video): ?>
-          <div class="plinks">
-            <?php if ($live): ?><a href="<?= e($live) ?>" target="_blank" rel="noopener" data-i18n="lnk_live">Visit site →</a><?php endif; ?>
-            <?php if ($demo): ?><a href="<?= e($demo) ?>" target="_blank" rel="noopener" data-i18n="lnk_demo">Try the demo →</a><?php endif; ?>
-            <?php if ($video): ?><a href="<?= e($video) ?>" target="_blank" rel="noopener" data-i18n="lnk_video">Watch walkthrough</a><?php endif; ?>
-          </div>
-          <?php endif; ?>
-        </div>
-      </article>
-<?php endforeach; ?>
-    </div>
+    <div class="grid" id="projects"></div>
   </div>
 </section>
 
@@ -225,8 +180,7 @@ function tr(string $en, string $es, string $tag = 'span', string $attrs = ''): s
 
 <section id="about">
   <div class="wrap about">
-    <?php $photo = img_url($s['photo']); ?>
-    <div class="photo" <?= $photo ? 'style="background-image:url(\'' . e($photo) . '\');color:transparent"' : '' ?>>EP</div>
+    <div class="photo" id="photo">EP</div>
     <div>
       <div class="head" style="margin-bottom:20px">
         <small data-i18n="ab_kicker">About me</small>
@@ -236,7 +190,7 @@ function tr(string $en, string $es, string $tag = 'span', string $attrs = ''): s
       <p data-i18n="ab_p2">I work in English and Spanish, and you deal with me directly — no agencies, no middlemen.</p>
       <div class="facts">
         <div><b>EN / ES</b><span data-i18n="f1">Bilingual service</span></div>
-        <div><b><?= e($s['projects_count']) ?></b><span data-i18n="f2">Projects launched</span></div>
+        <div><b id="projects-count">5+</b><span data-i18n="f2">Projects launched</span></div>
         <div><b>1:1</b><span data-i18n="f3">Direct contact</span></div>
       </div>
     </div>
@@ -252,13 +206,13 @@ function tr(string $en, string $es, string $tag = 'span', string $attrs = ''): s
     </div>
     <div class="contact">
       <div class="ways">
-        <?php if ($s['email']): ?><a href="mailto:<?= e($s['email']) ?>"><span>✉</span><div><small>Email</small><?= e($s['email']) ?></div></a><?php endif; ?>
-        <?php if ($tel): ?><a href="tel:<?= e($tel) ?>"><span>☏</span><div><small data-i18n="lbl_phone">Phone</small><?= e($s['phone']) ?></div></a><?php endif; ?>
-        <?php if ($wa): ?><a href="https://wa.me/<?= e($wa) ?>" target="_blank" rel="noopener"><span>◉</span><div><small>WhatsApp</small><span data-i18n="lbl_wa">Message me</span></div></a><?php endif; ?>
-        <?php if ($linkedin): ?><a href="<?= e($linkedin) ?>" target="_blank" rel="noopener"><span>in</span><div><small>LinkedIn</small><span data-i18n="lbl_li">View my profile</span></div></a><?php endif; ?>
+        <a id="c-email" hidden><span>✉</span><div><small>Email</small><span class="val"></span></div></a>
+        <a id="c-phone" hidden><span>☏</span><div><small data-i18n="lbl_phone">Phone</small><span class="val"></span></div></a>
+        <a id="c-wa" hidden target="_blank" rel="noopener"><span>◉</span><div><small>WhatsApp</small><span data-i18n="lbl_wa">Message me</span></div></a>
+        <a id="c-li" hidden target="_blank" rel="noopener"><span>in</span><div><small>LinkedIn</small><span data-i18n="lbl_li">View my profile</span></div></a>
       </div>
       <form action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="<?= e($s['web3forms_key']) ?>">
+        <input type="hidden" name="access_key" id="w3f-key" value="">
         <input type="hidden" name="subject" value="New portfolio inquiry">
         <input type="checkbox" name="botcheck" style="display:none">
         <input name="name" required data-i18n-ph="fm_name" placeholder="Your name">
@@ -279,7 +233,7 @@ function tr(string $en, string $es, string $tag = 'span', string $attrs = ''): s
 
 <footer>
   <div class="wrap">
-    <span>© <?= date('Y') ?> Erick Palma</span>
+    <span>© <span id="year">2026</span> Erick Palma</span>
     <span data-i18n="ft">Web Developer & Business Solutions</span>
   </div>
 </footer>
@@ -326,7 +280,7 @@ function setLang(lang){
   document.querySelectorAll('[data-i18n]').forEach(el => { const v = d[el.dataset.i18n]; if (v) el.textContent = v; });
   document.querySelectorAll('[data-i18n-html]').forEach(el => { const v = d[el.dataset.i18nHtml]; if (v) el.innerHTML = v; });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => { const v = d[el.dataset.i18nPh]; if (v) el.placeholder = v; });
-  // Project text typed in the admin panel
+  // Project text from data/projects.json
   document.querySelectorAll('[data-en]').forEach(el => { el.textContent = (lang === 'es' && el.dataset.es) ? el.dataset.es : el.dataset.en; });
   document.documentElement.lang = lang;
   document.querySelectorAll('.lang button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
@@ -336,6 +290,73 @@ document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click
 let saved = null;
 try { saved = localStorage.getItem('lang'); } catch(e) {}
 if (saved === 'es' || (!saved && (navigator.language || '').startsWith('es'))) setLang('es');
+
+/* ---------- Content from data/*.json ---------- */
+const GRADS = ['#e2572b,#7a2a63', '#f0a030,#c0392b', '#2fa36b,#1b5e4a', '#3a7bd5,#1b2a6b', '#6b5bd6,#2b2366', '#d6457a,#5b1f45'];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function safeUrl(u) {
+  u = String(u ?? '').trim();
+  if (!u) return '';
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch (e) { return ''; }
+}
+// Images live in the images/ folder; a value like "bros-tacos.jpg" or "images/bros-tacos.jpg" both work
+const imgUrl = f => { f = String(f ?? '').trim(); if (!f) return ''; if (/^https?:\/\//i.test(f)) return safeUrl(f); return encodeURI(f.startsWith('images/') ? f : 'images/' + f); };
+const tr = (en, es, tag, attrs = '') => `<${tag}${attrs} data-en="${esc(en)}"${es && es.trim() ? ` data-es="${esc(es)}"` : ''}>${esc(en)}</${tag}>`;
+const currentLang = () => document.documentElement.lang === 'es' ? 'es' : 'en';
+
+function renderProjects(list) {
+  list.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  document.getElementById('projects').innerHTML = list.map((p, i) => {
+    const img = imgUrl(p.image);
+    const bg = (img ? `url('${esc(img)}'),` : '') + `linear-gradient(135deg,${GRADS[i % GRADS.length]})`;
+    const live = safeUrl(p.live_url), demo = safeUrl(p.demo_url), video = safeUrl(p.video_url);
+    const stack = Array.isArray(p.stack) ? p.stack : [];
+    return `<article class="proj${p.featured ? ' feature' : ''}">
+      <div class="thumb${img ? ' has-img' : ''}" style="background-image:${bg}" role="img" aria-label="${esc(p.title)}">${esc(p.title)}</div>
+      <div class="body">
+        ${p.tag_en ? tr(p.tag_en, p.tag_es, 'div', ' class="tag"') : ''}
+        ${tr(p.title, p.title_es, 'h3')}
+        ${p.desc_en ? tr(p.desc_en, p.desc_es, 'p') : ''}
+        ${p.problem_en || p.result_en ? `<dl>
+          ${p.problem_en ? `<dt data-i18n="lbl_problem">Problem</dt>${tr(p.problem_en, p.problem_es, 'dd')}` : ''}
+          ${p.result_en ? `<dt data-i18n="lbl_result">Result</dt>${tr(p.result_en, p.result_es, 'dd')}` : ''}
+        </dl>` : ''}
+        ${stack.length ? `<div class="stack">${stack.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+        ${live || demo || video ? `<div class="plinks">
+          ${live ? `<a href="${esc(live)}" target="_blank" rel="noopener" data-i18n="lnk_live">Visit site →</a>` : ''}
+          ${demo ? `<a href="${esc(demo)}" target="_blank" rel="noopener" data-i18n="lnk_demo">Try the demo →</a>` : ''}
+          ${video ? `<a href="${esc(video)}" target="_blank" rel="noopener" data-i18n="lnk_video">Watch walkthrough</a>` : ''}
+        </div>` : ''}
+      </div>
+    </article>`;
+  }).join('');
+}
+
+function applySettings(s) {
+  const show = (id, href, text) => { const a = document.getElementById(id); if (!href) return; a.href = href; a.hidden = false; if (text) a.querySelector('.val').textContent = text; };
+  const email = String(s.email || '').trim(), phone = String(s.phone || '').trim();
+  const tel = phone.replace(/[^\d+]/g, ''), wa = String(s.whatsapp || '').replace(/\D/g, '');
+  show('c-email', email ? 'mailto:' + email : '', email);
+  show('c-phone', tel ? 'tel:' + tel : '', phone);
+  show('c-wa', wa ? 'https://wa.me/' + wa : '');
+  show('c-li', safeUrl(s.linkedin));
+  if (s.projects_count) document.getElementById('projects-count').textContent = s.projects_count;
+  document.getElementById('w3f-key').value = s.web3forms_key || '';
+  const photo = imgUrl(s.photo);
+  if (photo) { const el = document.getElementById('photo'); el.style.backgroundImage = `url('${photo.replace(/'/g, '%27')}')`; el.style.color = 'transparent'; }
+}
+
+document.getElementById('year').textContent = new Date().getFullYear();
+const getJson = f => fetch(f, { cache: 'no-cache' }).then(r => r.ok ? r.json() : Promise.reject(new Error(f + ': ' + r.status)));
+Promise.all([getJson('data/projects.json'), getJson('data/settings.json')])
+  .then(([projects, settings]) => {
+    renderProjects(projects); applySettings(settings);
+    // Remember the English text of labels that were just added (e.g. "Problem", "Visit site →")
+    document.querySelectorAll('#projects [data-i18n]').forEach(el => { if (!(el.dataset.i18n in EN)) EN[el.dataset.i18n] = el.textContent; });
+    setLang(currentLang());
+  })
+  .catch(err => console.error('Could not load site data', err));
 </script>
 </body>
 </html>

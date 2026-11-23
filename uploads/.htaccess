@@ -1,5 +1,0 @@
-# Images only: never serve or run scripts from this folder
-<FilesMatch "\.(php|phtml|php\d|phar|cgi|pl|py|sh|html?|htaccess)$">
-  Require all denied
-</FilesMatch>
-Options -Indexes
